@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Controlo Financeiro</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;background:#1A5FD4;display:flex;align-items:center;justify-content:center;min-height:100vh;}
+.wrap{width:390px;min-height:100vh;background:#F0F4FF;}
+.screen{display:none;}
+.screen.active{display:block;}
+.hero{background:#1A5FD4;padding:44px 24px 32px;text-align:center;}
+.hero-logo{width:72px;height:72px;border-radius:20px;background:#F5C518;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:32px;color:#0F3E96;}
+.hero-title{font-size:23px;font-weight:700;color:#F5C518;margin-bottom:6px;}
+.hero-sub{font-size:13px;color:rgba(255,255,255,.8);line-height:1.5;}
+.body{padding:28px 20px;}
+.body-title{font-size:16px;font-weight:600;color:#0D1B3E;margin-bottom:20px;text-align:center;}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:#1A5FD4;color:#FFFFFF;border:2px solid #1A5FD4;border-radius:12px;padding:15px 20px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:12px;font-family:Arial,sans-serif;}
+.btn:hover{background:#0F3E96;border-color:#0F3E96;}
+.btn:disabled{background:#7BAAE8;border-color:#7BAAE8;cursor:not-allowed;}
+.btn-white{background:#FFFFFF;color:#1A5FD4;border:2px solid #1A5FD4;}
+.btn-white:hover{background:#E8F0FD;}
+.btn-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:#FFFFFF;color:#0D1B3E;border:1.5px solid #C8D8F8;border-radius:12px;padding:13px 20px;font-size:14px;font-weight:500;cursor:pointer;margin-bottom:10px;font-family:Arial,sans-serif;}
+.btn-google:hover{background:#F0F4FF;}
+.form-group{margin-bottom:14px;}
+.form-label{font-size:12px;color:#5B6E9A;margin-bottom:6px;display:block;font-weight:500;}
+.input-wrap{position:relative;display:flex;align-items:center;}
+.inp-icon{position:absolute;left:12px;font-size:18px;color:#5B6E9A;pointer-events:none;z-index:1;}
+.form-input{width:100%;border:1.5px solid #C8D8F8;border-radius:10px;padding:12px 12px 12px 40px;font-size:14px;color:#0D1B3E;background:#FFFFFF;outline:none;font-family:Arial,sans-serif;}
+.form-input:focus{border-color:#1A5FD4;}
+.show-pass{position:absolute;right:12px;background:none;border:none;cursor:pointer;color:#5B6E9A;font-size:18px;}
+.divider-row{display:flex;align-items:center;gap:10px;margin:8px 0 12px;}
+.divider-line{flex:1;height:1px;background:#C8D8F8;}
+.divider-txt{font-size:13px;color:#5B6E9A;}
+.forgot{text-align:right;margin:-4px 0 12px;}
+.forgot span{font-size:12px;color:#1A5FD4;cursor:pointer;}
+.terms{font-size:11px;color:#5B6E9A;text-align:center;margin-top:14px;line-height:1.7;}
+.terms a{color:#1A5FD4;}
+.switch-lnk{text-align:center;font-size:13px;color:#5B6E9A;margin-top:16px;}
+.switch-lnk span{color:#1A5FD4;font-weight:700;cursor:pointer;}
+.alert-box{border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px;font-weight:500;display:none;line-height:1.4;}
+.alert-error{background:#FDECEA;color:#A32D2D;border:1px solid #F5C6C6;}
+.alert-success{background:#E6F4EA;color:#0F6E56;border:1px solid #C3E6CB;}
+.alert-info{background:#EFF4FD;color:#1A5FD4;border:1px solid #C8D8F8;}
+.verify-banner{background:#1A5FD4;border-radius:14px;padding:24px;text-align:center;margin-bottom:20px;}
+.verify-icon{font-size:48px;color:#F5C518;margin-bottom:12px;}
+.verify-title{font-size:18px;font-weight:700;color:#F5C518;margin-bottom:8px;}
+.verify-sub{font-size:13px;color:rgba(255,255,255,.85);line-height:1.6;}
+.verify-email{color:#F5C518;font-weight:700;word-break:break-all;}
+.spinner-btn{width:18px;height:18px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px;}
+.spinner-lg{width:30px;height:30px;border:3px solid rgba(245,197,24,.3);border-top-color:#F5C518;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.topbar{background:#1A5FD4;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-title{font-size:17px;font-weight:700;color:#F5C518;flex:1;text-align:center;}
+.topbar-btn{background:none;border:none;cursor:pointer;color:#FFFFFF;font-size:22px;padding:4px;}
+.logout-btn{background:none;border:none;cursor:pointer;color:#F5C518;font-size:13px;font-family:Arial,sans-serif;padding:4px 8px;font-weight:700;}
+.page{display:none;padding-bottom:86px;background:#F0F4FF;min-height:calc(100vh - 56px);}
+.page.active{display:block;}
+.page-banner{background:#1A5FD4;padding:16px 16px 22px;}
+.page-banner-title{font-size:19px;font-weight:700;color:#F5C518;}
+.page-banner-sub{font-size:12px;color:rgba(255,255,255,.75);margin-top:3px;}
+.bottom-nav{background:#FFFFFF;border-top:1.5px solid #C8D8F8;display:flex;padding:8px 0 14px;position:fixed;bottom:0;width:390px;}
+.nav-btn{flex:1;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px;color:#5B6E9A;font-size:10px;font-family:Arial,sans-serif;}
+.nav-btn.active{color:#1A5FD4;}
+.nav-btn i{font-size:22px;}
+.sec-wrap{margin:10px 12px 0;}
+.sec-banner{background:#1A5FD4;border-radius:12px 12px 0 0;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;}
+.sec-banner-title{font-size:13px;font-weight:700;color:#F5C518;}
+.sec-body{background:#FFFFFF;border-radius:0 0 12px 12px;border:1px solid #C8D8F8;border-top:none;padding:14px;}
+.balance-card{background:#1A5FD4;border-radius:14px;margin:12px;padding:18px 16px;}
+.bal-label{font-size:12px;color:#F5C518;margin-bottom:4px;}
+.bal-amt{font-size:30px;font-weight:700;color:#FFFFFF;}
+.bal-sub{font-size:12px;color:rgba(255,255,255,.7);margin-top:3px;}
+.bal-row{display:flex;gap:8px;margin-top:14px;}
+.mini{flex:1;background:rgba(255,255,255,.18);border-radius:10px;padding:10px;}
+.mini-lbl{font-size:10px;color:#F5C518;}
+.mini-val{font-size:13px;font-weight:700;color:#FFFFFF;margin-top:3px;}
+.hist-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #E8F0FD;cursor:pointer;}
+.hist-item:last-child{border-bottom:none;}
+.hist-icon{width:40px;height:40px;border-radius:10px;background:#1A5FD4;display:flex;align-items:center;justify-content:center;font-size:18px;color:#F5C518;flex-shrink:0;}
+.hist-name{font-size:13px;font-weight:600;color:#0D1B3E;}
+.hist-date{font-size:11px;color:#5B6E9A;margin-top:1px;}
+.hist-amt{font-size:14px;font-weight:700;color:#1A5FD4;}
+.toggle-group{display:flex;border:2px solid #F5C518;border-radius:8px;overflow:hidden;}
+.tgl{background:transparent;border:none;padding:4px 11px;font-size:12px;cursor:pointer;color:#F5C518;font-family:Arial,sans-serif;}
+.tgl.active{background:#F5C518;color:#0F3E96;font-weight:700;}
+.chart-wrap{position:relative;width:100%;height:150px;}
+.heat-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:6px;}
+.heat-cell{aspect-ratio:1;border-radius:3px;cursor:pointer;}
+.day-labels{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px;}
+.day-lbl{font-size:9px;color:#5B6E9A;text-align:center;}
+.heat-legend{display:flex;gap:4px;align-items:center;margin-top:8px;justify-content:flex-end;}
+.heat-swatch{width:10px;height:10px;border-radius:2px;}
+.heat-legend-txt{font-size:10px;color:#5B6E9A;}
+.upload-zone{background:#1A5FD4;border-radius:12px;padding:30px 20px;text-align:center;cursor:pointer;}
+.upload-zone i{font-size:38px;color:#F5C518;}
+.upload-txt{font-size:14px;font-weight:700;color:#F5C518;margin-top:8px;}
+.upload-sub{font-size:12px;color:rgba(255,255,255,.75);margin-top:4px;}
+.salary-box{background:#1A5FD4;border-radius:12px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.salary-lbl{font-size:11px;color:#F5C518;}
+.salary-val{font-size:20px;font-weight:700;color:#FFFFFF;}
+.salary-avail{font-size:16px;font-weight:700;color:#F5C518;}
+.salary-edit-btn{background:#F5C518;color:#0F3E96;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;}
+.prog-bar{height:7px;border-radius:4px;background:#E8F0FD;margin-top:5px;}
+.prog-fill{height:100%;border-radius:4px;}
+.budget-item{margin-bottom:14px;}
+.budget-lbl-row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px;color:#0D1B3E;}
+.budget-pct{color:#5B6E9A;font-size:12px;}
+.item-row{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid #E8F0FD;}
+.item-row:last-child{border-bottom:none;}
+.item-name{flex:1;font-size:13px;color:#0D1B3E;}
+.item-qty{font-size:12px;color:#5B6E9A;min-width:24px;text-align:center;}
+.item-val{font-size:13px;font-weight:700;color:#1A5FD4;min-width:60px;text-align:right;}
+.item-edit-btn{background:none;border:none;cursor:pointer;color:#5B6E9A;font-size:15px;}
+.processing-msg{text-align:center;padding:28px 20px;background:#1A5FD4;border-radius:12px;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,30,80,.5);z-index:100;align-items:flex-end;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:#FFFFFF;border-radius:20px 20px 0 0;width:390px;max-height:82vh;overflow-y:auto;}
+.modal-hdr{background:#1A5FD4;border-radius:20px 20px 0 0;padding:16px 18px;display:flex;align-items:center;justify-content:space-between;}
+.modal-hdr-title{font-size:15px;font-weight:700;color:#F5C518;}
+.modal-close{background:none;border:none;cursor:pointer;font-size:20px;color:rgba(255,255,255,.8);}
+.modal-body{padding:18px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- BOAS-VINDAS -->
+<div class="screen active" id="sc-welcome">
+  <div class="hero">
+    <div class="hero-logo"><i class="ti ti-shopping-cart"></i></div>
+    <div class="hero-title">Controlo Financeiro</div>
+    <div class="hero-sub">Gerencie as suas compras de supermercado de forma inteligente</div>
+  </div>
+  <div class="body">
+    <div class="body-title">Como quer continuar?</div>
+    <div id="alert-welcome" class="alert-box"></div>
+    <button class="btn" onclick="showScreen('sc-register')"><i class="ti ti-user-plus"></i>Criar conta nova</button>
+    <button class="btn" onclick="showScreen('sc-login')"><i class="ti ti-login"></i>Ja tenho conta - Entrar</button>
+    <div class="divider-row"><div class="divider-line"></div><span class="divider-txt">ou continuar com</span><div class="divider-line"></div></div>
+    <button class="btn-google" onclick="loginGoogle()">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Continuar com Google
+    </button>
+    <div class="terms">Ao continuar aceita os <a href="#">Termos de Uso</a> e <a href="#">Politica de Privacidade</a></div>
+  </div>
+</div>
+
+<!-- CADASTRO -->
+<div class="screen" id="sc-register">
+  <div class="hero">
+    <div class="hero-logo"><i class="ti ti-user-plus"></i></div>
+    <div class="hero-title">Criar conta</div>
+    <div class="hero-sub">Recebera um e-mail de verificacao apos o registo</div>
+  </div>
+  <div class="body">
+    <div id="alert-reg" class="alert-box"></div>
+    <div class="form-group">
+      <label class="form-label">Nome completo</label>
+      <div class="input-wrap"><i class="ti ti-user inp-icon"></i><input class="form-input" type="text" placeholder="ex: Joao Silva" id="reg-name"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">E-mail</label>
+      <div class="input-wrap"><i class="ti ti-mail inp-icon"></i><input class="form-input" type="email" placeholder="exemplo@gmail.com" id="reg-email"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Palavra-passe (minimo 6 caracteres)</label>
+      <div class="input-wrap">
+        <i class="ti ti-lock inp-icon"></i>
+        <input class="form-input" type="password" placeholder="Minimo 6 caracteres" id="reg-pass">
+        <button class="show-pass" type="button" onclick="togglePass('reg-pass','reg-eye')"><i class="ti ti-eye" id="reg-eye"></i></button>
+      </div>
+    </div>
+    <button class="btn" id="btn-reg" type="button" onclick="doRegister()"><i class="ti ti-mail"></i>Criar conta e enviar verificacao</button>
+    <div class="divider-row"><div class="divider-line"></div><span class="divider-txt">ou</span><div class="divider-line"></div></div>
+    <button class="btn-google" type="button" onclick="loginGoogle()">
+      <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Continuar com Google
+    </button>
+    <div class="terms">Ao continuar aceita os <a href="#">Termos de Uso</a></div>
+    <div class="switch-lnk">Ja tem conta? <span onclick="showScreen('sc-login')">Entrar</span></div>
+  </div>
+</div>
+
+<!-- VERIFICAR EMAIL -->
+<div class="screen" id="sc-verify">
+  <div class="hero">
+    <div class="hero-logo"><i class="ti ti-mail-check"></i></div>
+    <div class="hero-title">Verifique o e-mail</div>
+    <div class="hero-sub">Clique no link que enviamos para activar a conta</div>
+  </div>
+  <div class="body">
+    <div class="verify-banner">
+      <div class="verify-icon"><i class="ti ti-mail"></i></div>
+      <div class="verify-title">E-mail enviado!</div>
+      <div class="verify-sub">Abra o e-mail enviado para<br><span class="verify-email" id="verify-email-lbl"></span><br><br>Clique no link de verificacao e depois clique em "Ja verifiquei".</div>
+    </div>
+    <div id="alert-verify" class="alert-box"></div>
+    <button class="btn" id="btn-check" type="button" onclick="checkVerified()"><i class="ti ti-refresh"></i>Ja verifiquei - Entrar</button>
+    <button class="btn btn-white" id="btn-resend" type="button" onclick="resendVerification()"><i class="ti ti-send"></i>Reenviar e-mail</button>
+    <div class="switch-lnk" style="margin-top:14px;"><span onclick="showScreen('sc-register')">Voltar ao registo</span></div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="screen" id="sc-login">
+  <div class="hero">
+    <div class="hero-logo"><i class="ti ti-login"></i></div>
+    <div class="hero-title">Bem-vindo de volta</div>
+    <div class="hero-sub">Entre na sua conta para continuar</div>
+  </div>
+  <div class="body">
+    <div id="alert-login" class="alert-box"></div>
+    <div class="form-group">
+      <label class="form-label">E-mail</label>
+      <div class="input-wrap"><i class="ti ti-mail inp-icon"></i><input class="form-input" type="email" placeholder="exemplo@gmail.com" id="login-email"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Palavra-passe</label>
+      <div class="input-wrap">
+        <i class="ti ti-lock inp-icon"></i>
+        <input class="form-input" type="password" placeholder="A sua palavra-passe" id="login-pass">
+        <button class="show-pass" type="button" onclick="togglePass('login-pass','login-eye')"><i class="ti ti-eye" id="login-eye"></i></button>
+      </div>
+    </div>
+    <div class="forgot"><span onclick="showScreen('sc-forgot')">Esqueceu a palavra-passe?</span></div>
+    <button class="btn" id="btn-login" type="button" onclick="doLogin()"><i class="ti ti-login"></i>Entrar</button>
+    <div class="divider-row"><div class="divider-line"></div><span class="divider-txt">ou</span><div class="divider-line"></div></div>
+    <button class="btn-google" type="button" onclick="loginGoogle()">
+      <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Continuar com Google
+    </button>
+    <div class="switch-lnk">Nao tem conta? <span onclick="showScreen('sc-register')">Criar conta</span></div>
+  </div>
+</div>
+
+<!-- RECUPERAR SENHA -->
+<div class="screen" id="sc-forgot">
+  <div class="hero">
+    <div class="hero-logo"><i class="ti ti-lock-open"></i></div>
+    <div class="hero-title">Recuperar acesso</div>
+    <div class="hero-sub">Enviaremos um link para redefinir a palavra-passe</div>
+  </div>
+  <div class="body">
+    <div id="alert-forgot" class="alert-box"></div>
+    <div class="form-group">
+      <label class="form-label">O seu e-mail de registo</label>
+      <div class="input-wrap"><i class="ti ti-mail inp-icon"></i><input class="form-input" type="email" placeholder="exemplo@gmail.com" id="forgot-email"></div>
+    </div>
+    <button class="btn" id="btn-forgot" type="button" onclick="doForgot()"><i class="ti ti-send"></i>Enviar link de recuperacao</button>
+    <button class="btn btn-white" type="button" onclick="showScreen('sc-login')"><i class="ti ti-arrow-left"></i>Voltar ao login</button>
+  </div>
+</div>
+
+<!-- APP PRINCIPAL -->
+<div class="screen" id="sc-app">
+  <div class="topbar">
+    <button class="topbar-btn" type="button"><i class="ti ti-menu-2"></i></button>
+    <span class="topbar-title">Controlo Financeiro</span>
+    <button class="logout-btn" type="button" onclick="doLogout()">Sair</button>
+  </div>
+
+  <div class="page active" id="page-home">
+    <div class="balance-card">
+      <div class="bal-label">Total gasto este mes</div>
+      <div class="bal-amt" id="total-mes">MT 0,00</div>
+      <div class="bal-sub">Orcamento restante: <span style="color:#F5C518;font-weight:700;" id="orcamento-rest">MT 0,00</span></div>
+      <div class="bal-row">
+        <div class="mini"><div class="mini-lbl">Esta semana</div><div class="mini-val">MT 1.120</div></div>
+        <div class="mini"><div class="mini-lbl">Utilizador</div><div class="mini-val" id="user-nome-app" style="font-size:11px;">--</div></div>
+        <div class="mini"><div class="mini-lbl">Recibos</div><div class="mini-val" id="num-recibos">0</div></div>
+      </div>
+    </div>
+    <div class="sec-wrap">
+      <div class="sec-banner">
+        <span class="sec-banner-title"><i class="ti ti-chart-bar"></i> Gastos</span>
+        <div class="toggle-group">
+          <button class="tgl active" id="tgl-d" type="button" onclick="switchChart('day')">Diario</button>
+          <button class="tgl" id="tgl-m" type="button" onclick="switchChart('month')">Mensal</button>
+        </div>
+      </div>
+      <div class="sec-body">
+        <div class="chart-wrap"><canvas id="spendChart"></canvas></div>
+        <div id="chart-tip" style="text-align:center;font-size:12px;color:#5B6E9A;margin-top:6px;height:16px;"></div>
+      </div>
+    </div>
+    <div class="sec-wrap">
+      <div class="sec-banner">
+        <span class="sec-banner-title"><i class="ti ti-calendar"></i> Mapa de calor</span>
+        <div class="toggle-group">
+          <button class="tgl active" id="tgl-hm" type="button" onclick="switchHeat('month')">Mes</button>
+          <button class="tgl" id="tgl-hw" type="button" onclick="switchHeat('week')">Semana</button>
+        </div>
+      </div>
+      <div class="sec-body">
+        <div class="day-labels"><span class="day-lbl">Dom</span><span class="day-lbl">Seg</span><span class="day-lbl">Ter</span><span class="day-lbl">Qua</span><span class="day-lbl">Qui</span><span class="day-lbl">Sex</span><span class="day-lbl">Sab</span></div>
+        <div class="heat-grid" id="heat-grid"></div>
+        <div id="heat-info" style="font-size:12px;color:#5B6E9A;margin-top:8px;text-align:center;height:16px;"></div>
+        <div class="heat-legend">
+          <span class="heat-legend-txt">Menos</span>
+          <div class="heat-swatch" style="background:#E8F0FD;"></div>
+          <div class="heat-swatch" style="background:#9DB8EF;"></div>
+          <div class="heat-swatch" style="background:#4E7FE0;"></div>
+          <div class="heat-swatch" style="background:#1A5FD4;"></div>
+          <div class="heat-swatch" style="background:#0A2B7A;"></div>
+          <span class="heat-legend-txt">Mais</span>
+        </div>
+      </div>
+    </div>
+    <div class="sec-wrap" style="margin-bottom:0;">
+      <div class="sec-banner">
+        <span class="sec-banner-title"><i class="ti ti-clock"></i> Historico recente</span>
+        <button type="button" onclick="switchPage('page-history')" style="background:none;border:none;cursor:pointer;font-size:12px;color:#F5C518;font-weight:700;font-family:Arial,sans-serif;">Ver tudo</button>
+      </div>
+      <div class="sec-body"><div id="hist-list"></div></div>
+    </div>
+  </div>
+
+  <div class="page" id="page-scan">
+    <div class="page-banner">
+      <div class="page-banner-title"><i class="ti ti-camera"></i> Foto de recibo</div>
+      <div class="page-banner-sub">Digitalize ou insira os seus produtos</div>
+    </div>
+    <div style="padding:12px;">
+      <div id="drop-area" class="upload-zone" onclick="document.getElementById('file-inp').click()">
+        <i class="ti ti-camera-plus"></i>
+        <div class="upload-txt">Fotografar recibo</div>
+        <div class="upload-sub">Toque para seleccionar a foto do recibo</div>
+        <input type="file" id="file-inp" accept="image/*" style="display:none;" onchange="handleFile()">
+      </div>
+      <div id="proc-area" style="display:none;margin-top:12px;">
+        <div class="processing-msg">
+          <div class="spinner-lg"></div>
+          <div style="font-size:13px;color:#F5C518;font-weight:700;" id="proc-msg">A analisar recibo...</div>
+        </div>
+      </div>
+      <div id="items-preview" style="display:none;">
+        <div class="sec-wrap" style="margin:12px 0 0;">
+          <div class="sec-banner">
+            <span class="sec-banner-title"><i class="ti ti-list"></i> Itens extraidos</span>
+            <span style="font-size:12px;color:#F5C518;font-weight:700;" id="item-count"></span>
+          </div>
+          <div class="sec-body">
+            <div id="items-list"></div>
+            <div style="display:flex;justify-content:space-between;padding:10px 0;border-top:1px solid #E8F0FD;margin-top:4px;">
+              <span style="font-size:14px;font-weight:700;color:#0D1B3E;">Total</span>
+              <span style="font-size:14px;font-weight:700;color:#1A5FD4;" id="items-total"></span>
+            </div>
+            <button class="btn" type="button" onclick="saveReceipt()"><i class="ti ti-device-floppy"></i>Guardar compra</button>
+          </div>
+        </div>
+      </div>
+      <div class="sec-wrap" style="margin:12px 0 0;">
+        <div class="sec-banner"><span class="sec-banner-title"><i class="ti ti-pencil"></i> Adicionar manualmente</span></div>
+        <div class="sec-body">
+          <div class="form-group"><label class="form-label">Nome do produto</label><div class="input-wrap"><i class="ti ti-shopping-cart inp-icon"></i><input class="form-input" type="text" placeholder="ex: Arroz 5kg" id="man-name"></div></div>
+          <div class="form-group"><label class="form-label">Valor (MT)</label><div class="input-wrap"><i class="ti ti-coin inp-icon"></i><input class="form-input" type="number" placeholder="0.00" id="man-val"></div></div>
+          <div class="form-group"><label class="form-label">Quantidade</label><div class="input-wrap"><i class="ti ti-hash inp-icon"></i><input class="form-input" type="number" value="1" id="man-qty"></div></div>
+          <button class="btn" type="button" onclick="addManual()"><i class="ti ti-plus"></i>Adicionar item</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-history">
+    <div class="page-banner">
+      <div class="page-banner-title"><i class="ti ti-clock"></i> Historico</div>
+      <div class="page-banner-sub">Todas as suas compras registadas</div>
+    </div>
+    <div style="padding:12px;">
+      <div class="sec-wrap" style="margin:6px 0 0;">
+        <div class="sec-banner">
+          <span class="sec-banner-title">Total gasto</span>
+          <span style="font-size:13px;color:#F5C518;font-weight:700;" id="hist-total"></span>
+        </div>
+        <div class="sec-body"><div id="full-hist"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page" id="page-budget">
+    <div class="page-banner">
+      <div class="page-banner-title"><i class="ti ti-chart-pie"></i> Orcamento</div>
+      <div class="page-banner-sub">Distribua o seu salario com inteligencia</div>
+    </div>
+    <div style="padding:12px;">
+      <div class="sec-wrap" style="margin:6px 0 0;">
+        <div class="sec-banner">
+          <span class="sec-banner-title"><i class="ti ti-wallet"></i> Salario mensal</span>
+          <button class="salary-edit-btn" type="button" onclick="openModal('salary-modal')"><i class="ti ti-edit"></i> Editar</button>
+        </div>
+        <div class="sec-body">
+          <div class="salary-box">
+            <div><div class="salary-lbl">Salario definido</div><div class="salary-val" id="sal-display">MT 6.000</div></div>
+            <div style="text-align:right;"><div class="salary-lbl">Disponivel</div><div class="salary-avail" id="avail-display">MT 0,00</div></div>
+          </div>
+          <div id="budget-breakdown"></div>
+        </div>
+      </div>
+      <div class="sec-wrap" style="margin:10px 0 0;">
+        <div class="sec-banner"><span class="sec-banner-title"><i class="ti ti-chart-donut"></i> Distribuicao</span></div>
+        <div class="sec-body">
+          <div style="position:relative;width:100%;height:200px;"><canvas id="budgetChart"></canvas></div>
+          <div id="budget-legend" style="margin-top:10px;display:flex;flex-wrap:wrap;gap:8px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <button class="nav-btn active" id="nav-home" type="button" onclick="switchPage('page-home')"><i class="ti ti-home"></i>Inicio</button>
+    <button class="nav-btn" id="nav-scan" type="button" onclick="switchPage('page-scan')"><i class="ti ti-camera"></i>Recibo</button>
+    <button class="nav-btn" id="nav-history" type="button" onclick="switchPage('page-history')"><i class="ti ti-clock"></i>Historico</button>
+    <button class="nav-btn" id="nav-budget" type="button" onclick="switchPage('page-budget')"><i class="ti ti-chart-pie"></i>Orcamento</button>
+  </div>
+</div>
+
+<!-- MODAL EDITAR ITEM -->
+<div class="modal-overlay" id="edit-modal">
+  <div class="modal-box">
+    <div class="modal-hdr"><span class="modal-hdr-title"><i class="ti ti-edit"></i> Editar item</span><button class="modal-close" type="button" onclick="closeModal('edit-modal')"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Nome</label><input class="form-input" type="text" id="edit-name" style="padding-left:12px;"></div>
+      <div class="form-group"><label class="form-label">Valor (MT)</label><input class="form-input" type="number" id="edit-val" style="padding-left:12px;"></div>
+      <div class="form-group"><label class="form-label">Quantidade</label><input class="form-input" type="number" id="edit-qty" style="padding-left:12px;"></div>
+      <button class="btn" type="button" onclick="saveEdit()"><i class="ti ti-device-floppy"></i>Guardar alteracoes</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SALARIO -->
+<div class="modal-overlay" id="salary-modal">
+  <div class="modal-box">
+    <div class="modal-hdr"><span class="modal-hdr-title"><i class="ti ti-wallet"></i> Configurar orcamento</span><button class="modal-close" type="button" onclick="closeModal('salary-modal')"><i class="ti ti-x"></i></button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Salario mensal (MT)</label><input class="form-input" type="number" id="sal-inp" placeholder="6000" style="padding-left:12px;"></div>
+      <div style="font-size:13px;font-weight:700;color:#0D1B3E;margin-bottom:10px;">Divisao (%)</div>
+      <div class="form-group"><label class="form-label">Necessidades basicas</label><input class="form-input" type="number" id="pct-basic" value="50" style="padding-left:12px;"></div>
+      <div class="form-group"><label class="form-label">Fundo de emergencia</label><input class="form-input" type="number" id="pct-emerg" value="10" style="padding-left:12px;"></div>
+      <div class="form-group"><label class="form-label">Investimentos</label><input class="form-input" type="number" id="pct-invest" value="15" style="padding-left:12px;"></div>
+      <div class="form-group"><label class="form-label">Lazer</label><input class="form-input" type="number" id="pct-lazer" value="10" style="padding-left:12px;"></div>
+      <div class="form-group"><label class="form-label">Mensalidades</label><input class="form-input" type="number" id="pct-subs" value="15" style="padding-left:12px;"></div>
+      <div id="pct-warn" style="font-size:12px;color:#A32D2D;margin-bottom:8px;display:none;">Total deve ser 100%</div>
+      <button class="btn" type="button" onclick="saveSalary()"><i class="ti ti-device-floppy"></i>Guardar configuracao</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<!-- CHART.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+
+<!-- FIREBASE COMPAT (escopo global, sem módulos) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+<script>
+// ================================================================
+// FIREBASE INIT
+// ================================================================
+var firebaseConfig = {
+  apiKey: "AIzaSyCHb6W7PUGUcGjjx3pVRsgjSxtTAhfQw7Y",
+  authDomain: "gerenciepay.firebaseapp.com",
+  projectId: "gerenciepay",
+  storageBucket: "gerenciepay.firebasestorage.app",
+  messagingSenderId: "1040632855540",
+  appId: "1:1040632855540:web:b35a28b4e5fadfcbd4d7a1",
+  measurementId: "G-L0D0RSVFP8"
+};
+firebase.initializeApp(firebaseConfig);
+var auth = firebase.auth();
+var googleProvider = new firebase.auth.GoogleAuthProvider();
+var currentUser = null;
+
+// Detectar sessao activa
+auth.onAuthStateChanged(function(user) {
+  if (user && user.emailVerified) {
+    goToApp(user);
+  }
+});
+
+// ================================================================
+// UI HELPERS
+// ================================================================
+function showScreen(id) {
+  var screens = document.querySelectorAll('.screen');
+  for (var i = 0; i < screens.length; i++) screens[i].classList.remove('active');
+  document.getElementById(id).classList.add('active');
+}
+
+function togglePass(inputId, eyeId) {
+  var inp = document.getElementById(inputId);
+  var eye = document.getElementById(eyeId);
+  if (inp.type === 'password') { inp.type = 'text'; eye.className = 'ti ti-eye-off'; }
+  else { inp.type = 'password'; eye.className = 'ti ti-eye'; }
+}
+
+function showAlert(id, msg, type) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.className = 'alert-box alert-' + type;
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(function() { el.style.display = 'none'; }, 8000);
+}
+
+function setLoading(btnId, loading, html) {
+  var b = document.getElementById(btnId);
+  if (!b) return;
+  if (loading) {
+    b.innerHTML = '<span class="spinner-btn"></span>A processar...';
+    b.disabled = true;
+  } else {
+    b.innerHTML = html;
+    b.disabled = false;
+  }
+}
+
+function traduzir(code) {
+  var msgs = {
+    'auth/email-already-in-use': 'Este e-mail ja esta registado. Faca login.',
+    'auth/invalid-email': 'E-mail invalido. Verifique e tente novamente.',
+    'auth/weak-password': 'Palavra-passe fraca. Use pelo menos 6 caracteres.',
+    'auth/user-not-found': 'E-mail nao encontrado. Verifique ou crie uma conta.',
+    'auth/wrong-password': 'Palavra-passe incorrecta. Tente novamente.',
+    'auth/invalid-credential': 'E-mail ou palavra-passe incorrectos.',
+    'auth/too-many-requests': 'Muitas tentativas. Aguarde alguns minutos.',
+    'auth/network-request-failed': 'Sem ligacao a internet.',
+    'auth/popup-closed-by-user': 'Login com Google cancelado.',
+    'auth/user-disabled': 'Esta conta foi desactivada.'
+  };
+  return msgs[code] || 'Ocorreu um erro. Tente novamente. (' + code + ')';
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ================================================================
+// FIREBASE AUTH FUNCTIONS
+// ================================================================
+function doRegister() {
+  var name = document.getElementById('reg-name').value.trim();
+  var email = document.getElementById('reg-email').value.trim();
+  var pass = document.getElementById('reg-pass').value;
+  if (!name) { showAlert('alert-reg', 'Insira o seu nome completo.', 'error'); return; }
+  if (!email) { showAlert('alert-reg', 'Insira o seu e-mail.', 'error'); return; }
+  if (pass.length < 6) { showAlert('alert-reg', 'Palavra-passe deve ter pelo menos 6 caracteres.', 'error'); return; }
+  setLoading('btn-reg', true, '<i class="ti ti-mail"></i>Criar conta e enviar verificacao');
+  auth.createUserWithEmailAndPassword(email, pass)
+    .then(function(cred) {
+      return cred.user.updateProfile({ displayName: name }).then(function() {
+        return cred.user.sendEmailVerification();
+      }).then(function() {
+        currentUser = cred.user;
+        document.getElementById('verify-email-lbl').textContent = email;
+        showScreen('sc-verify');
+        showAlert('alert-verify', 'E-mail de verificacao enviado para ' + email + '. Verifique a caixa de entrada.', 'success');
+      });
+    })
+    .catch(function(e) {
+      showAlert('alert-reg', traduzir(e.code), 'error');
+    })
+    .finally(function() {
+      setLoading('btn-reg', false, '<i class="ti ti-mail"></i>Criar conta e enviar verificacao');
+    });
+}
+
+function checkVerified() {
+  setLoading('btn-check', true, '<i class="ti ti-refresh"></i>Ja verifiquei - Entrar');
+  if (!currentUser) {
+    showAlert('alert-verify', 'Sessao expirou. Volte ao registo.', 'error');
+    setLoading('btn-check', false, '<i class="ti ti-refresh"></i>Ja verifiquei - Entrar');
+    return;
+  }
+  currentUser.reload()
+    .then(function() {
+      if (currentUser.emailVerified) {
+        goToApp(currentUser);
+      } else {
+        showAlert('alert-verify', 'E-mail ainda nao verificado. Clique no link no e-mail e tente novamente.', 'error');
+      }
+    })
+    .catch(function(e) {
+      showAlert('alert-verify', traduzir(e.code), 'error');
+    })
+    .finally(function() {
+      setLoading('btn-check', false, '<i class="ti ti-refresh"></i>Ja verifiquei - Entrar');
+    });
+}
+
+function resendVerification() {
+  setLoading('btn-resend', true, '<i class="ti ti-send"></i>Reenviar e-mail');
+  if (!currentUser) {
+    showAlert('alert-verify', 'Sessao expirou. Volte ao registo.', 'error');
+    setLoading('btn-resend', false, '<i class="ti ti-send"></i>Reenviar e-mail');
+    return;
+  }
+  currentUser.sendEmailVerification()
+    .then(function() {
+      showAlert('alert-verify', 'E-mail reenviado! Verifique a caixa de entrada.', 'success');
+    })
+    .catch(function(e) {
+      showAlert('alert-verify', traduzir(e.code), 'error');
+    })
+    .finally(function() {
+      setLoading('btn-resend', false, '<i class="ti ti-send"></i>Reenviar e-mail');
+    });
+}
+
+function doLogin() {
+  var email = document.getElementById('login-email').value.trim();
+  var pass = document.getElementById('login-pass').value;
+  if (!email || !pass) { showAlert('alert-login', 'Preencha o e-mail e a palavra-passe.', 'error'); return; }
+  setLoading('btn-login', true, '<i class="ti ti-login"></i>Entrar');
+  auth.signInWithEmailAndPassword(email, pass)
+    .then(function(cred) {
+      if (!cred.user.emailVerified) {
+        currentUser = cred.user;
+        document.getElementById('verify-email-lbl').textContent = email;
+        showScreen('sc-verify');
+        showAlert('alert-verify', 'Verifique o e-mail primeiro. Clique no link que enviamos.', 'info');
+      } else {
+        goToApp(cred.user);
+      }
+    })
+    .catch(function(e) {
+      showAlert('alert-login', traduzir(e.code), 'error');
+    })
+    .finally(function() {
+      setLoading('btn-login', false, '<i class="ti ti-login"></i>Entrar');
+    });
+}
+
+function doForgot() {
+  var email = document.getElementById('forgot-email').value.trim();
+  if (!email) { showAlert('alert-forgot', 'Insira o seu e-mail.', 'error'); return; }
+  setLoading('btn-forgot', true, '<i class="ti ti-send"></i>Enviar link de recuperacao');
+  auth.sendPasswordResetEmail(email)
+    .then(function() {
+      showAlert('alert-forgot', 'Link de recuperacao enviado para ' + email + '. Verifique a caixa de entrada.', 'success');
+    })
+    .catch(function(e) {
+      showAlert('alert-forgot', traduzir(e.code), 'error');
+    })
+    .finally(function() {
+      setLoading('btn-forgot', false, '<i class="ti ti-send"></i>Enviar link de recuperacao');
+    });
+}
+
+function loginGoogle() {
+  auth.signInWithPopup(googleProvider)
+    .then(function(result) {
+      goToApp(result.user);
+    })
+    .catch(function(e) {
+      showAlert('alert-welcome', traduzir(e.code), 'error');
+    });
+}
+
+function doLogout() {
+  auth.signOut().then(function() {
+    currentUser = null;
+    showScreen('sc-welcome');
+  });
+}
+
+function goToApp(user) {
+  currentUser = user;
+  var name = user.displayName || user.email.split('@')[0];
+  document.getElementById('user-nome-app').textContent = name;
+  showScreen('sc-app');
+  renderHome();
+}
+
+// ================================================================
+// APP STATE
+// ================================================================
+var appState = {
+  salary: 6000,
+  budgetPcts: { basic: 50, emerg: 10, invest: 15, lazer: 10, subs: 15 },
+  receipts: [
+    { id: 1, date: '2025-05-14', store: 'Shoprite', items: [{ name: 'Arroz 5kg', qty: 2, val: 540 }, { name: 'Frango congelado', qty: 1, val: 320 }, { name: 'Oleo alimentar', qty: 2, val: 180 }], total: 1210 },
+    { id: 2, date: '2025-05-10', store: 'Pick n Pay', items: [{ name: 'Leite UHT', qty: 4, val: 85 }, { name: 'Pao de forma', qty: 2, val: 45 }, { name: 'Manteiga', qty: 1, val: 120 }], total: 780 },
+    { id: 3, date: '2025-05-07', store: 'Shoprite', items: [{ name: 'Macarrao', qty: 5, val: 55 }, { name: 'Feijao 1kg', qty: 2, val: 110 }], total: 640 },
+    { id: 4, date: '2025-05-05', store: 'Choppies', items: [{ name: 'Refrigerante 2L', qty: 4, val: 110 }, { name: 'Bolachas', qty: 6, val: 45 }], total: 560 },
+    { id: 5, date: '2025-05-02', store: 'Shoprite', items: [{ name: 'Sabao em po', qty: 1, val: 220 }], total: 470 },
+    { id: 6, date: '2025-05-01', store: 'Pick n Pay', items: [{ name: 'Carne picada', qty: 2, val: 180 }, { name: 'Peixe congelado', qty: 1, val: 250 }], total: 620 }
+  ],
+  pendingItems: [],
+  chartMode: 'day',
+  heatMode: 'month'
+};
+var editIdx = -1;
+var spendChart = null;
+var budgetChart = null;
+
+var dailyData = [0, 0, 620, 0, 470, 0, 560, 640, 0, 0, 780, 0, 0, 0, 1210, 0];
+var dayLabels = [];
+for (var di = 1; di <= 16; di++) dayLabels.push(di + '/05');
+var monthlyData = [1800, 2100, 3200, 2800, 3900, 4280];
+var monthLabels = ['Dez', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai'];
+
+// ================================================================
+// HELPERS
+// ================================================================
+function fmt(v) {
+  return 'MT ' + Number(v).toLocaleString('pt-MZ', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function fmtDate(d) {
+  return new Date(d + 'T12:00:00').toLocaleDateString('pt-MZ', { day: '2-digit', month: 'short' });
+}
+
+// ================================================================
+// NAVEGACAO
+// ================================================================
+function switchPage(id) {
+  var pages = document.querySelectorAll('.page');
+  for (var i = 0; i < pages.length; i++) pages[i].classList.remove('active');
+  var navs = document.querySelectorAll('.nav-btn');
+  for (var j = 0; j < navs.length; j++) navs[j].classList.remove('active');
+  document.getElementById(id).classList.add('active');
+  var map = { 'page-home': 'nav-home', 'page-scan': 'nav-scan', 'page-history': 'nav-history', 'page-budget': 'nav-budget' };
+  if (map[id]) document.getElementById(map[id]).classList.add('active');
+  if (id === 'page-home') renderHome();
+  if (id === 'page-history') renderHistory();
+  if (id === 'page-budget') renderBudget();
+}
+
+// ================================================================
+// HOME
+// ================================================================
+function renderHome() {
+  var total = 0;
+  for (var i = 0; i < appState.receipts.length; i++) total += appState.receipts[i].total;
+  document.getElementById('total-mes').textContent = fmt(total);
+  document.getElementById('orcamento-rest').textContent = fmt(Math.max(0, appState.salary * 0.5 - total));
+  document.getElementById('num-recibos').textContent = appState.receipts.length;
+  renderHistList();
+  buildHeatMap();
+  buildChart();
+}
+
+function renderHistList() {
+  var sorted = appState.receipts.slice().sort(function(a, b) { return b.date.localeCompare(a.date); });
+  var recent = sorted.slice(0, 4);
+  var html = '';
+  for (var i = 0; i < recent.length; i++) {
+    var r = recent[i];
+    html += '<div class="hist-item"><div class="hist-icon"><i class="ti ti-receipt"></i></div><div style="flex:1;"><div class="hist-name">' + r.store + '</div><div class="hist-date">' + fmtDate(r.date) + ' &middot; ' + r.items.length + ' itens</div></div><div class="hist-amt">' + fmt(r.total) + '</div></div>';
+  }
+  document.getElementById('hist-list').innerHTML = html;
+}
+
+// ================================================================
+// GRAFICO
+// ================================================================
+function buildChart() {
+  var ctx = document.getElementById('spendChart').getContext('2d');
+  if (spendChart) spendChart.destroy();
+  var isDay = appState.chartMode === 'day';
+  var labels = isDay ? dayLabels.slice(-10) : monthLabels;
+  var data = isDay ? dailyData.slice(-10) : monthlyData;
+  var bgColors = [];
+  for (var i = 0; i < data.length; i++) bgColors.push(data[i] > 0 ? '#1A5FD4' : '#D6E4FA');
+  spendChart = new Chart(ctx, {
+    type: 'bar',
+    data: { labels: labels, datasets: [{ data: data, backgroundColor: bgColors, borderRadius: 5, borderSkipped: false }] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: function(c) { return '  ' + fmt(c.raw); } }, displayColors: false, backgroundColor: '#0F3E96', titleColor: '#F5C518', bodyColor: '#fff', padding: 8, cornerRadius: 8 }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#5B6E9A' } },
+        y: { grid: { color: 'rgba(26,95,212,.07)' }, ticks: { font: { size: 10 }, color: '#5B6E9A', callback: function(v) { return v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v; } } }
+      },
+      onHover: function(evt, els) {
+        var tip = document.getElementById('chart-tip');
+        if (els.length) tip.textContent = labels[els[0].index] + ': ' + fmt(data[els[0].index]);
+        else tip.textContent = '';
+      }
+    }
+  });
+}
+
+function switchChart(mode) {
+  appState.chartMode = mode;
+  document.getElementById('tgl-d').classList.toggle('active', mode === 'day');
+  document.getElementById('tgl-m').classList.toggle('active', mode === 'month');
+  buildChart();
+}
+
+// ================================================================
+// MAPA DE CALOR
+// ================================================================
+function buildHeatMap() {
+  var hd = {};
+  for (var i = 0; i < appState.receipts.length; i++) {
+    var r = appState.receipts[i];
+    hd[r.date] = (hd[r.date] || 0) + r.total;
+  }
+  var maxVal = 1;
+  var keys = Object.keys(hd);
+  for (var k = 0; k < keys.length; k++) if (hd[keys[k]] > maxVal) maxVal = hd[keys[k]];
+  var colors = ['#F0F4FF', '#B5CBF7', '#6B98EE', '#3370E0', '#1A5FD4', '#0A2B7A'];
+  var html = '';
+  var grid = document.getElementById('heat-grid');
+  if (appState.heatMode === 'month') {
+    var fd = new Date('2025-05-01').getDay();
+    for (var e = 0; e < fd; e++) html += '<div style="aspect-ratio:1;"></div>';
+    for (var d = 1; d <= 31; d++) {
+      var ds = '2025-05-' + (d < 10 ? '0' + d : '' + d);
+      var v = hd[ds] || 0;
+      var ci = v === 0 ? 0 : Math.min(5, Math.ceil((v / maxVal) * 5));
+      html += '<div class="heat-cell" style="background:' + colors[ci] + ';" onmouseenter="heatHov(\'' + d + ' mai\',' + v + ')" onmouseleave="heatHov(null,0)"></div>';
+    }
+  } else {
+    var wd = ['2025-05-11','2025-05-12','2025-05-13','2025-05-14','2025-05-15','2025-05-16','2025-05-17'];
+    var wl = ['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];
+    for (var wi = 0; wi < wd.length; wi++) {
+      var wv = hd[wd[wi]] || 0;
+      var wci = wv === 0 ? 0 : Math.min(5, Math.ceil((wv / maxVal) * 5));
+      html += '<div class="heat-cell" style="background:' + colors[wci] + ';" onmouseenter="heatHov(\'' + wl[wi] + '\',' + wv + ')" onmouseleave="heatHov(null,0)"></div>';
+    }
+  }
+  grid.innerHTML = html;
+}
+
+function heatHov(d, v) {
+  document.getElementById('heat-info').textContent = d ? d + ': ' + fmt(v) : '';
+}
+
+function switchHeat(mode) {
+  appState.heatMode = mode;
+  document.getElementById('tgl-hm').classList.toggle('active', mode === 'month');
+  document.getElementById('tgl-hw').classList.toggle('active', mode === 'week');
+  buildHeatMap();
+}
+
+// ================================================================
+// HISTORICO
+// ================================================================
+function renderHistory() {
+  var sorted = appState.receipts.slice().sort(function(a, b) { return b.date.localeCompare(a.date); });
+  var total = 0;
+  for (var i = 0; i < sorted.length; i++) total += sorted[i].total;
+  document.getElementById('hist-total').textContent = fmt(total);
+  var html = '';
+  for (var j = 0; j < sorted.length; j++) {
+    var r = sorted[j];
+    var detail = '';
+    for (var m = 0; m < r.items.length; m++) {
+      var it = r.items[m];
+      detail += '<div style="display:flex;justify-content:space-between;font-size:12px;padding:2px 0;color:#5B6E9A;"><span>' + it.name + ' x' + it.qty + '</span><span style="color:#1A5FD4;font-weight:700;">' + fmt(it.val * it.qty) + '</span></div>';
+    }
+    html += '<div class="hist-item" onclick="togDetail(\'hd-' + r.id + '\')">' +
+      '<div class="hist-icon"><i class="ti ti-receipt"></i></div>' +
+      '<div style="flex:1;"><div class="hist-name">' + r.store + '</div>' +
+      '<div class="hist-date">' + fmtDate(r.date) + ' &middot; ' + r.items.length + ' itens</div>' +
+      '<div id="hd-' + r.id + '" style="display:none;margin-top:8px;">' + detail + '</div></div>' +
+      '<div class="hist-amt">' + fmt(r.total) + '</div></div>';
+  }
+  document.getElementById('full-hist').innerHTML = html;
+}
+
+function togDetail(id) {
+  var el = document.getElementById(id);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+// ================================================================
+// ORCAMENTO
+// ================================================================
+function renderBudget() {
+  var salary = appState.salary;
+  var spent = 0;
+  for (var i = 0; i < appState.receipts.length; i++) spent += appState.receipts[i].total;
+  document.getElementById('sal-display').textContent = fmt(salary);
+  document.getElementById('avail-display').textContent = fmt(Math.max(0, salary - spent));
+  document.getElementById('sal-inp').value = salary;
+  var cats = [
+    { key: 'basic', label: 'Necessidades basicas', color: '#1A5FD4' },
+    { key: 'emerg', label: 'Fundo de emergencia', color: '#0F6E56' },
+    { key: 'invest', label: 'Investimentos', color: '#3B6D11' },
+    { key: 'lazer', label: 'Lazer', color: '#F5C518' },
+    { key: 'subs', label: 'Mensalidades', color: '#A32D2D' }
+  ];
+  var breakdown = '';
+  for (var j = 0; j < cats.length; j++) {
+    var c = cats[j];
+    var alloc = salary * (appState.budgetPcts[c.key] / 100);
+    var used = c.key === 'basic' ? spent : 0;
+    var pct = Math.min(100, (used / alloc) * 100);
+    breakdown += '<div class="budget-item"><div class="budget-lbl-row"><span>' + c.label + '</span><span class="budget-pct">' + fmt(alloc) + ' (' + appState.budgetPcts[c.key] + '%)</span></div><div class="prog-bar"><div class="prog-fill" style="width:' + pct.toFixed(1) + '%;background:' + c.color + ';"></div></div></div>';
+  }
+  document.getElementById('budget-breakdown').innerHTML = breakdown;
+  var ctx2 = document.getElementById('budgetChart').getContext('2d');
+  if (budgetChart) budgetChart.destroy();
+  var catLabels = cats.map(function(c) { return c.label; });
+  var catData = cats.map(function(c) { return appState.budgetPcts[c.key]; });
+  var catColors = cats.map(function(c) { return c.color; });
+  budgetChart = new Chart(ctx2, {
+    type: 'doughnut',
+    data: { labels: catLabels, datasets: [{ data: catData, backgroundColor: catColors, borderWidth: 3, borderColor: '#fff' }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+  });
+  var legend = '';
+  for (var l = 0; l < cats.length; l++) {
+    legend += '<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:#5B6E9A;"><div style="width:9px;height:9px;border-radius:2px;background:' + cats[l].color + ';flex-shrink:0;"></div>' + cats[l].label + '</div>';
+  }
+  document.getElementById('budget-legend').innerHTML = legend;
+}
+
+function saveSalary() {
+  var s = parseFloat(document.getElementById('sal-inp').value) || 6000;
+  var keys = ['basic', 'emerg', 'invest', 'lazer', 'subs'];
+  var vals = [];
+  for (var i = 0; i < keys.length; i++) vals.push(parseInt(document.getElementById('pct-' + keys[i]).value) || 0);
+  var sum = 0;
+  for (var j = 0; j < vals.length; j++) sum += vals[j];
+  if (sum !== 100) { document.getElementById('pct-warn').style.display = 'block'; return; }
+  document.getElementById('pct-warn').style.display = 'none';
+  appState.salary = s;
+  for (var k = 0; k < keys.length; k++) appState.budgetPcts[keys[k]] = vals[k];
+  closeModal('salary-modal');
+  renderBudget();
+}
+
+// ================================================================
+// RECIBO / SCAN
+// ================================================================
+function handleFile() {
+  document.getElementById('drop-area').style.display = 'none';
+  document.getElementById('proc-area').style.display = 'block';
+  var msgs = ['A analisar recibo...', 'A identificar produtos...', 'A extrair valores...', 'Quase pronto...'];
+  var idx = 0;
+  var iv = setInterval(function() {
+    document.getElementById('proc-msg').textContent = msgs[Math.min(idx, msgs.length - 1)];
+    idx++;
+    if (idx >= msgs.length) { clearInterval(iv); showExtracted(); }
+  }, 800);
+}
+
+function showExtracted() {
+  document.getElementById('proc-area').style.display = 'none';
+  appState.pendingItems = [
+    { name: 'Arroz 5kg', qty: 1, val: 270 },
+    { name: 'Oleo alimentar', qty: 2, val: 180 },
+    { name: 'Frango inteiro', qty: 1, val: 420 },
+    { name: 'Acucar 2kg', qty: 1, val: 95 }
+  ];
+  renderPending();
+  document.getElementById('items-preview').style.display = 'block';
+}
+
+function renderPending() {
+  var total = 0;
+  for (var i = 0; i < appState.pendingItems.length; i++) total += appState.pendingItems[i].val * appState.pendingItems[i].qty;
+  document.getElementById('item-count').textContent = appState.pendingItems.length + ' itens';
+  document.getElementById('items-total').textContent = fmt(total);
+  var html = '';
+  for (var j = 0; j < appState.pendingItems.length; j++) {
+    var it = appState.pendingItems[j];
+    html += '<div class="item-row"><span class="item-name">' + it.name + '</span><span class="item-qty">x' + it.qty + '</span><span class="item-val">' + fmt(it.val * it.qty) + '</span><button class="item-edit-btn" type="button" onclick="openEditItem(' + j + ')"><i class="ti ti-edit"></i></button></div>';
+  }
+  document.getElementById('items-list').innerHTML = html;
+}
+
+function openEditItem(i) {
+  editIdx = i;
+  var it = appState.pendingItems[i];
+  document.getElementById('edit-name').value = it.name;
+  document.getElementById('edit-val').value = it.val;
+  document.getElementById('edit-qty').value = it.qty;
+  openModal('edit-modal');
+}
+
+function saveEdit() {
+  if (editIdx >= 0) {
+    appState.pendingItems[editIdx].name = document.getElementById('edit-name').value;
+    appState.pendingItems[editIdx].val = parseFloat(document.getElementById('edit-val').value) || 0;
+    appState.pendingItems[editIdx].qty = parseInt(document.getElementById('edit-qty').value) || 1;
+    renderPending();
+  }
+  closeModal('edit-modal');
+}
+
+function saveReceipt() {
+  if (!appState.pendingItems.length) return;
+  var total = 0;
+  for (var i = 0; i < appState.pendingItems.length; i++) total += appState.pendingItems[i].val * appState.pendingItems[i].qty;
+  appState.receipts.unshift({
+    id: Date.now(),
+    date: new Date().toISOString().slice(0, 10),
+    store: 'Shoprite',
+    items: appState.pendingItems.slice(),
+    total: total
+  });
+  appState.pendingItems = [];
+  document.getElementById('items-preview').style.display = 'none';
+  document.getElementById('drop-area').style.display = 'block';
+  document.getElementById('file-inp').value = '';
+  alert('Compra guardada com sucesso!');
+  switchPage('page-home');
+}
+
+function addManual() {
+  var n = document.getElementById('man-name').value.trim();
+  var v = parseFloat(document.getElementById('man-val').value) || 0;
+  var q = parseInt(document.getElementById('man-qty').value) || 1;
+  if (!n || !v) { alert('Preencha o nome e o valor do produto.'); return; }
+  appState.receipts.unshift({ id: Date.now(), date: new Date().toISOString().slice(0, 10), store: 'Manual', items: [{ name: n, qty: q, val: v }], total: v * q });
+  document.getElementById('man-name').value = '';
+  document.getElementById('man-val').value = '';
+  document.getElementById('man-qty').value = '1';
+  alert('"' + n + '" adicionado com sucesso!');
+  switchPage('page-home');
+}
+
+// ================================================================
+// MODALS — fechar ao clicar fora
+// ================================================================
+document.addEventListener('DOMContentLoaded', function() {
+  var overlays = document.querySelectorAll('.modal-overlay');
+  for (var i = 0; i < overlays.length; i++) {
+    overlays[i].addEventListener('click', function(e) {
+      if (e.target === this) this.classList.remove('open');
+    });
+  }
+});
+</script>
+</body>
+</html>

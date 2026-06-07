@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Controlo Financeiro</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;background:#0D1B3E;min-height:100vh;color:#0D1B3E;}
+.wrap{max-width:420px;margin:0 auto;min-height:100vh;background:#F0F4FF;}
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* LOGIN */
+.login-page{background:#0D1B3E;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;}
+.login-logo{width:84px;height:84px;border-radius:22px;background:#F5C518;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:40px;color:#0D1B3E;}
+.login-title{font-size:22px;font-weight:700;color:#F5C518;text-align:center;margin-bottom:6px;}
+.login-sub{font-size:13px;color:rgba(255,255,255,.5);text-align:center;margin-bottom:32px;}
+.login-form{width:100%;max-width:340px;}
+.lf-group{margin-bottom:14px;}
+.lf-label{font-size:12px;color:rgba(255,255,255,.55);margin-bottom:6px;display:block;font-weight:500;}
+.lf-input{width:100%;border:1.5px solid rgba(255,255,255,.15);border-radius:10px;padding:13px 14px;font-size:14px;color:#FFFFFF;background:rgba(255,255,255,.07);outline:none;font-family:Arial,sans-serif;}
+.lf-input:focus{border-color:#F5C518;}
+.lf-input::placeholder{color:rgba(255,255,255,.25);}
+.lbtn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:#F5C518;color:#0D1B3E;border:none;border-radius:12px;padding:14px 20px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;font-family:Arial,sans-serif;}
+.lbtn:hover{background:#D4A800;}
+.lbtn:disabled{opacity:.5;cursor:not-allowed;}
+.lerr{background:rgba(255,80,80,.2);border:1px solid rgba(255,80,80,.3);border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:13px;color:#FF9090;display:none;}
+.linfo{background:rgba(245,197,24,.1);border:1px solid rgba(245,197,24,.2);border-radius:10px;padding:12px 14px;margin-top:18px;font-size:12px;color:rgba(255,255,255,.5);text-align:center;}
+.linfo i{color:#F5C518;}
+.spinner-b{width:16px;height:16px;border:2px solid rgba(13,27,62,.3);border-top-color:#0D1B3E;border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;margin-right:4px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* TOPBAR */
+.topbar{background:#0D1B3E;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.topbar-left{display:flex;flex-direction:column;}
+.topbar-title{font-size:15px;font-weight:700;color:#F5C518;}
+.topbar-sub{font-size:10px;color:rgba(255,255,255,.4);margin-top:1px;}
+.topbar-right{display:flex;align-items:center;gap:8px;}
+.topbar-user{font-size:11px;color:rgba(255,255,255,.5);}
+.topbar-logout{background:rgba(245,197,24,.15);border:1px solid rgba(245,197,24,.25);border-radius:8px;padding:5px 10px;font-size:12px;color:#F5C518;cursor:pointer;font-family:Arial,sans-serif;}
+
+/* TABS */
+.tabs{background:#0D1B3E;display:flex;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,.08);padding:0 8px;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab-btn{background:none;border:none;border-bottom:2px solid transparent;padding:11px 13px;font-size:12px;font-weight:600;color:rgba(255,255,255,.35);cursor:pointer;white-space:nowrap;font-family:Arial,sans-serif;flex-shrink:0;transition:color .15s;}
+.tab-btn.active{color:#F5C518;border-bottom-color:#F5C518;}
+
+/* PANELS */
+.panel{display:none;padding:14px;}
+.panel.active{display:block;}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.stat-card{background:#FFFFFF;border-radius:12px;padding:14px;border:1px solid #C8D8F8;}
+.stat-icon{width:36px;height:36px;border-radius:8px;background:#1A5FD4;display:flex;align-items:center;justify-content:center;font-size:18px;color:#F5C518;margin-bottom:8px;}
+.stat-val{font-size:22px;font-weight:700;color:#0D1B3E;}
+.stat-lbl{font-size:11px;color:#5B6E9A;margin-top:2px;}
+
+/* SECTIONS */
+.sec{background:#FFFFFF;border-radius:12px;border:1px solid #C8D8F8;margin-bottom:12px;overflow:hidden;}
+.sec-hdr{background:#0D1B3E;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;}
+.sec-hdr-title{font-size:13px;font-weight:700;color:#F5C518;}
+.sec-body{padding:14px;}
+
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse;}
+.tbl th{font-size:11px;color:#5B6E9A;font-weight:600;padding:6px 8px;text-align:left;border-bottom:1px solid #E8F0FD;}
+.tbl td{font-size:12px;color:#0D1B3E;padding:8px;border-bottom:0.5px solid #F0F4FF;}
+.tbl tr:last-child td{border-bottom:none;}
+.badge{font-size:10px;padding:2px 8px;border-radius:6px;font-weight:600;}
+.badge-green{background:#E6F4EA;color:#0F6E56;}
+.badge-yellow{background:#FFF3CD;color:#856404;}
+.badge-red{background:#FDECEA;color:#A32D2D;}
+.badge-blue{background:#E8F0FD;color:#1A5FD4;}
+
+/* FORMS */
+.f-row{margin-bottom:12px;}
+.f-row label{font-size:12px;color:#5B6E9A;margin-bottom:5px;display:block;font-weight:500;}
+.f-row input,.f-row select,.f-row textarea{width:100%;border:1.5px solid #C8D8F8;border-radius:8px;padding:10px 12px;font-size:13px;color:#0D1B3E;background:#FFFFFF;outline:none;font-family:Arial,sans-serif;}
+.f-row input:focus,.f-row select:focus{border-color:#1A5FD4;}
+.f-row textarea{resize:vertical;min-height:80px;}
+.f-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.btn-blue{display:flex;align-items:center;justify-content:center;gap:8px;background:#1A5FD4;color:#FFFFFF;border:2px solid #1A5FD4;border-radius:10px;padding:11px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;width:100%;margin-top:6px;}
+.btn-blue:hover{background:#0F3E96;}
+.btn-blue:disabled{opacity:.5;cursor:not-allowed;}
+.btn-yellow{display:flex;align-items:center;justify-content:center;gap:8px;background:#F5C518;color:#0D1B3E;border:2px solid #F5C518;border-radius:10px;padding:11px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;width:100%;margin-top:6px;}
+.btn-yellow:hover{background:#D4A800;}
+.btn-danger{display:flex;align-items:center;justify-content:center;gap:8px;background:#FDECEA;color:#A32D2D;border:2px solid #F5C6C6;border-radius:10px;padding:11px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;width:100%;margin-top:6px;}
+.btn-sm{padding:4px 10px;font-size:11px;border-radius:6px;cursor:pointer;font-family:Arial,sans-serif;font-weight:600;border:none;}
+.btn-sm-blue{background:#E8F0FD;color:#1A5FD4;}
+.btn-sm-red{background:#FDECEA;color:#A32D2D;}
+.btn-sm-green{background:#E6F4EA;color:#0F6E56;}
+
+/* TOGGLES */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:0.5px solid #F0F4FF;}
+.toggle-row:last-child{border-bottom:none;}
+.toggle-info{flex:1;}
+.toggle-title{font-size:13px;font-weight:600;color:#0D1B3E;}
+.toggle-desc{font-size:11px;color:#5B6E9A;margin-top:1px;}
+.switch{width:44px;height:24px;border-radius:12px;border:none;cursor:pointer;position:relative;flex-shrink:0;transition:background .2s;}
+.switch.on{background:#1A5FD4;}
+.switch.off{background:#C8D8F8;}
+.knob{width:18px;height:18px;border-radius:50%;background:#FFFFFF;position:absolute;top:3px;transition:left .2s;pointer-events:none;}
+.switch.on .knob{left:23px;}
+.switch.off .knob{left:3px;}
+
+/* PANEL ALERTS */
+.p-alert{border-radius:10px;padding:11px 14px;margin-bottom:12px;font-size:13px;font-weight:500;display:none;}
+.p-alert.ok{background:#E6F4EA;color:#0F6E56;border:1px solid #C3E6CB;}
+.p-alert.err{background:#FDECEA;color:#A32D2D;border:1px solid #F5C6C6;}
+
+/* COLOR OPTS */
+.color-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+.c-opt{width:32px;height:32px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:transform .1s;}
+.c-opt.sel{border-color:#0D1B3E;transform:scale(1.1);}
+.color-preview{background:#0D1B3E;border-radius:10px;padding:12px 14px;margin-top:10px;display:flex;align-items:center;gap:12px;}
+.color-preview-lbl{font-size:12px;color:rgba(255,255,255,.5);}
+
+/* LOGS */
+.log-item{display:flex;gap:10px;padding:8px 0;border-bottom:0.5px solid #F0F4FF;}
+.log-item:last-child{border-bottom:none;}
+.log-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.log-text{font-size:12px;color:#0D1B3E;}
+.log-time{font-size:10px;color:#5B6E9A;margin-top:2px;}
+
+/* NOTIF PREVIEW */
+.notif-prev{background:#0D1B3E;border-radius:10px;padding:12px 14px;margin-top:10px;display:none;}
+.notif-prev-title{font-size:13px;font-weight:700;color:#F5C518;}
+.notif-prev-body{font-size:12px;color:rgba(255,255,255,.7);margin-top:4px;}
+
+/* BACKUP */
+.bk-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:0.5px solid #F0F4FF;}
+.bk-item:last-child{border-bottom:none;}
+.bk-icon{width:36px;height:36px;border-radius:8px;background:#E8F0FD;display:flex;align-items:center;justify-content:center;font-size:18px;color:#1A5FD4;flex-shrink:0;}
+.bk-info{flex:1;}
+.bk-name{font-size:13px;font-weight:600;color:#0D1B3E;}
+.bk-date{font-size:11px;color:#5B6E9A;margin-top:1px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ===== LOGIN ===== -->
+<div class="screen active" id="sc-login">
+  <div class="login-page">
+    <div class="login-logo"><i class="ti ti-shield-lock"></i></div>
+    <div class="login-title">Painel de Administrador</div>
+    <div class="login-sub">Controlo Financeiro &mdash; Gerenciepay</div>
+    <div class="login-form">
+      <div id="login-err" class="lerr"></div>
+      <div class="lf-group">
+        <label class="lf-label">E-mail de administrador</label>
+        <input class="lf-input" type="email" id="adm-email" placeholder="admin@gerenciepay.com" value="admin@gerenciepay.com">
+      </div>
+      <div class="lf-group">
+        <label class="lf-label">Palavra-passe</label>
+        <input class="lf-input" type="password" id="adm-pass" placeholder="A sua palavra-passe" onkeydown="if(event.key==='Enter') doLogin()">
+      </div>
+      <button class="lbtn" id="btn-login" type="button" onclick="doLogin()">
+        <i class="ti ti-shield-check"></i>Entrar como Administrador
+      </button>
+      <div class="linfo">
+        <i class="ti ti-lock" style="font-size:13px;"></i>
+        Acesso restrito. Use o e-mail <strong style="color:#F5C518;">admin@gerenciepay.com</strong> criado no Firebase.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAINEL ===== -->
+<div class="screen" id="sc-panel">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title"><i class="ti ti-shield" style="font-size:13px;margin-right:4px;"></i>Admin Panel</div>
+      <div class="topbar-sub" id="topbar-email">admin@gerenciepay.com</div>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-logout" type="button" onclick="doLogout()"><i class="ti ti-logout" style="font-size:13px;"></i> Sair</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" type="button" onclick="switchTab('p-overview',0)"><i class="ti ti-layout-dashboard" style="font-size:12px;"></i> Visao Geral</button>
+    <button class="tab-btn" type="button" onclick="switchTab('p-users',1)"><i class="ti ti-users" style="font-size:12px;"></i> Utilizadores</button>
+    <button class="tab-btn" type="button" onclick="switchTab('p-app',2)"><i class="ti ti-settings" style="font-size:12px;"></i> App</button>
+    <button class="tab-btn" type="button" onclick="switchTab('p-notifs',3)"><i class="ti ti-bell" style="font-size:12px;"></i> Notificacoes</button>
+    <button class="tab-btn" type="button" onclick="switchTab('p-backup',4)"><i class="ti ti-database" style="font-size:12px;"></i> Backup</button>
+    <button class="tab-btn" type="button" onclick="switchTab('p-logs',5)"><i class="ti ti-list" style="font-size:12px;"></i> Logs</button>
+  </div>
+
+  <!-- VISAO GERAL -->
+  <div class="panel active" id="p-overview">
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-icon"><i class="ti ti-users"></i></div>
+        <div class="stat-val" id="st-users">3</div>
+        <div class="stat-lbl">Utilizadores</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="ti ti-receipt"></i></div>
+        <div class="stat-val">18</div>
+        <div class="stat-lbl">Recibos digitalizados</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="ti ti-coin"></i></div>
+        <div class="stat-val">MT 28k</div>
+        <div class="stat-lbl">Total de gastos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="ti ti-activity"></i></div>
+        <div class="stat-val">2</div>
+        <div class="stat-lbl">Activos hoje</div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-hdr"><span class="sec-hdr-title"><i class="ti ti-users" style="font-size:12px;margin-right:4px;"></i>Utilizadores recentes</span></div>
+      <div class="sec-body" style="padding:0;">
+        <table class="tbl">
+          <thead><tr><th>E-mail</th><th>Estado</th><th>Data</th></tr></thead>
+          <tbody>
+            <tr><td>derciobila@gmail.com</td><td><span class="badge badge-green">Activo</span></td><td>17 mai</td></tr>
+            <tr><td>joao@gmail.com</td><td><span class="badge badge-green">Activo</span></td><td>15 mai</td></tr>
+            <tr><td>maria@outlook.com</td><td><span class="badge badge-yellow">Pendente</span></td><td>19 mai</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-hdr"><span class="sec-hdr-title"><i class="ti ti-toggle-right" style="font-size:12px;margin-right:4px;"></i>Estado do sistema</span></div>
+      <div class="sec-body">
+        <div class="toggle-row">
+          <div class="toggle-info"><div class="toggle-title">App online</div><div class="toggle-desc">Aplicacao acessivel aos utilizadores</div></div>
+          <button class="switch on" id="sw-online" type="button" onclick="tog('sw-online')"><div class="knob"></div></button>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info"><div class="toggle-title">Novos registos</div><div class="toggle-desc">Permitir criacao de novas contas</div></div>
+          <button class="switch on" id="sw-reg" type="button" onclick="tog('sw-reg')"><div class="knob"></div></button>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info"><div class="toggle-title">Modo manutencao</div><div class="toggle-desc">Bloqueia acesso a utilizadores normais</div></div>
+          <button class="switch off" id="sw-maint" type="button" onclick="tog('sw-maint')"><div class="knob"></div></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- UTILIZADORES -->
+  <div class="panel" id="p-users">
+    <div id="alert-users" class="p-alert"></div>
+
+    <div class="sec">
+      <div class="sec-hdr"><span class="sec-hdr-title"><i class="ti ti-user-plus" style="font-size:12px;margin-right:4px;"></i>Criar novo utilizador</span></div>
+      <div class="sec-body">
+        <div class="f-row"><label>Nome completo</label><input type="text" id="nu-name" placeholder="Nome do utilizador"></div>
+        <div class="f-row"><label>E-mail</label><input type="email" id="nu-email" placeholder="email@exemplo.com"></div>
+        <div class="f-grid">
+          <div class="f-row" style="margin-bottom:0;"><label>Palavra-passe</label><input type="password" id="nu-pass" placeholder="Min. 6 caracteres"></div>
+          <div class="f-row" style="margin-bottom:0;"><label>Perfil</label><select id="nu-role"><option value="user">Utilizador</option><option value="premium">Premium</option><option value="admin">Admin</option></select></div>
+        </div>
+        <button class="btn-blue" type="button" id="btn-create-user" onclick="createUser()"><i class="ti ti-user-plus"></i>Criar utilizador</button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-hdr"><span class="sec-hdr-title"><i class="ti ti-users" style="font-size:12px;margin-right:4px;"></i>Gerir utilizadores</span></div>
+      <div class="sec-body" style="padding:0;">
+        <table class="tbl">
+          <thead><tr><th>Utilizador</th><th>Perfil</th><th>Acc.</th></tr></thead>
+          <tbody id="users-tbody">
+            <tr>
+              <td><div style="font-size:12px;font-weight:600;">Dercio Bila</div><div style="font-size:10px;color:#5B6E9A;">derciobila@gmail.com</div></td>
+              <td><span class="badge badge-blue">Admin</span></td>
+              <td><button class="btn-sm btn-sm-red" type="button">Bloquear</button></td>
+            </tr>
+            <tr>
+              <td><div style="font-size:12px;font-weight:600;">Joao Silva</div><div style="font-size:10px;color:#5B6E9A;">joao@gmail.com</div></td>
+              <td><span class="badge badge-green">User</span></td>
+              <td><button class="btn-sm btn-sm-red" type="button">Bloquear</button></td>
+            </tr>
+            <tr>
+              <td><div style="font-size:12px;font-weight:600;">Maria Santos</div><div style="font-size:10px;color:#5B6E9A;">maria@outlook.com</div></td>
+              <td><span class="badge badge-green">User</span></td>
+              <td><button class="btn-sm btn-sm-green" type="button">Aprovar</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-hdr"><span class="sec-hdr-title"><i class="ti ti-key" style="font-size:12px;margin-right:4px;"></i>Redefinir palavra-passe</span></div>
+      <div class="sec-body">
+        <div class="f-row"><label>E-mail do utilizador</label><input type="email" id="reset-email" placeholder="email@exemplo.com"></div>
+        <button class="btn-yellow" type="button" onclick="sendReset()"><i class="ti ti-send"></i>Enviar link de recuperacao</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div class="panel" id="p-app">
+    <div id="alert-app" class="p-alert"></div>
+
+    <div class="sec">
+      <div class="sec-hdr"><span class="sec-hdr-title"><i class="ti ti-palette" style="font-size:12px;margin-right:4px;"></i>Cores da aplicacao</span></div>
+      <div class="sec-body">
+        <div class="f-row">
+          <label>Cor principal</label>
+          <div class="color-row">
+            <div class="c-opt sel" style="background:#1A5FD4;" onclick="pickColor('p','#1A5FD4',this)"></div>
+            <div class="c-opt" style="background:#0F3E96;" onclick="pickColor('p','#0F3E96',this)"></div>
+            <div class="c-opt" style="background:#1E88E5;" onclick="pickColor('p','#1E88E5',this)"></div>
+            <div class="c-opt" style="background:#00897B;" onclick="pickColor('p','#00897B',this)"></div>
+            <div class="c-opt" style="background:#43A047;" onclick="pickColor('p','#43A047',this)"></div>
+            <div class="c-opt" style="background:#E53935;" onclick="pickColor('p','#E53935',this)"></div>
+            <input type="color" value="#1A5FD4" id="cp-custom" style="width:32px;height:32px;border-radius:8px;border:none;cursor:pointer;padding:0;" onchange="pickColorCustom('p',this.value)">
+          </div>
+        </div>
+        <div class="f-row">
+          <label>Cor de destaque</label>
+          <div class="color-row">
+            <div class="c-opt sel" style="background:#F5C518;" onclick="pickColor('a','#F5C518',this)"></div>
+            <div class="c-opt" style="background:#FFB300;" onclick="pickColor('a','#FFB300',this)"></div>
+            <div class="c-opt" style="background:#FF7043;" onclick="pickColor('a','#FF7043',this)"></div>
+            <div class="c-opt" style="background:#FFFFFF;border:1px solid #ddd;" onclick="pickColor('a','#FFFFFF',this)"></div>
+            <input type="color" value="#F5C518" id="ca-custom" style="width:32px;height:32px;border-radius:8px;border:none;cursor:pointer;padding:0;" onchange="pickColorCustom('a',this.value)">
+          </div>
+        </div>
+        <div class="color-preview">
+          <div class="color-preview-lbl">Previa:</div>
+          <div id="color-prev" style="background:#1A5FD4;color:#F5C518;border-radius:8px;padding:7px 16px;font-size:13px;font-weight:700;">Botao exemplo</div>
+        </div>
+        <button class="btn-blue" type="button" style="margin-top:12px;" onclick="saveColors()"><i class="ti ti-device-floppy"></i>Guardar cores</button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-hdr"><span class="sec-hdr-title"><i class="ti ti-adjustments" style="font-size:12px;margin-right:4px;"></i>Configuracoes gerais</span></div>
+      <div class="sec-body">
+        <div class="f-row"><label>Nome da aplicacao</label><input type="text" id="app-name" value="Controlo Financeiro"></div>
+        <div class="f-row"><label>Moeda padrao</label>
+          <select id="app-currency">
+            <option>Metical (MT)</option>
+            <option>Dolar (USD)</option>
+            <option>Euro (EUR)</option>
+            <option>Rand (ZAR)</option>
+          </select>
+        </div>
+        <div class="f-row"><label>Salario padrao (MT)</label><input type="number" id="app-salary" value="6000"></div>
+        <div class="f-row"><label>Limite de recibos por mes</label><input type="number" id="app-limit" value="50"></div>
+        <button class="btn-blue" type="button" onclick="saveAppConfig()"><i class="ti ti-device-floppy"></i>Guardar configuracoes</button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-hdr"><span class="sec-hdr-title"><i class="ti ti-tag" style="font-size:12px;margin-right:4px;"></i>Categorias de produtos</span></div>
+      <div class="sec-body">
+        <div id="cats-list">
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid #F0F4FF;"><div style="flex:1;font-size:13px;">Alimentacao base</div><button class="btn-sm btn-sm-red" onclick="this.parentElement.remove()">Remover</button></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid #F0F4FF;"><div style="flex:1;font-size:13px;">Carnes e proteinas</div><button class="btn-sm btn-sm-red" onclick="this.parentElement.remove()">Remover</button></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid #F0F4FF;"><div style="flex:1;font-size:13px;">Higiene e limpeza</div><button class="btn-sm btn-sm-red" onclick="this.parentElement.remove()">Remover</button></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid #F0F4FF;"><div style="flex:1;font-size:13px;">Bebidas e snacks</div><button class="btn-sm btn-sm-red" onclick="this.parentElement.remove()">Remover</button></div>
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 0;"><div style="flex:1;font-size:13px;">Laticinios</div><button class="btn-sm btn-sm-red" onclick="this.parentElement.remove()">Remover</button></div>
+        </div>
+        <div class="f-row" style="margin-top:12px;margin-bottom:6px;"><label>Nova categoria</label><input type="text" id="new-cat" placeholder="ex: Frutas e vegetais"></div>
+        <button class="btn-blue" type="button" onclick="addCat()"><i class="ti ti-plus"></i>Adicionar categoria</button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-hdr"><span class="sec-hdr-title"><i class="ti ti-building-store" style="font-size:12px;margin-right:4px;"></i>Supermercados</span></div>
+      <div class="sec-body">
+        <div class="toggle-row"><div class="toggle-info"><div class="toggle-title">Shoprite</div></div><button class="switch on" id="sw-s1" type="button" onclick="tog('sw-s1')"><div class="knob"></div></button></div>
+        <div class="toggle-row"><div class="toggle-info"><div class="toggle-title">Pick n Pay</div></div><button class="switch on" id="sw-s2" type="button" onclick="tog('sw-s2')"><div class="knob"></div></button></div>
+        <div class="toggle-row"><div class="toggle-info"><div class="toggle-title">Choppies</div></div><button class="switch on" id="sw-s3" type="button" onclick="tog('sw-s3')"><div class="knob"></div></button></div>
+        <div class="toggle-row"><div class="toggle-info"><div class="toggle-title">Spar</div></div><button class="switch off" id="sw-s4" type="button" onclick="tog('sw-s4')"><div class="knob"></div></button></div>
+        <div class="f-row" style="margin-top:12px;margin-bottom:6px;"><label>Adicionar supermercado</label><input type="text" id="new-store" placeholder="ex: Game, Kero..."></div>
+        <button class="btn-blue" type="button" onclick="addStore()"><i class="ti ti-plus"></i>Adicionar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTIFICACOES -->
+  <div class="panel" id="p-notifs">
+    <div id="alert-notifs" class="p-alert"></div>
+
+    <div class="sec">
+      <div class="sec-hdr"><span class="sec-hdr-title"><i class="ti ti-send" style="font-size:12px;margin-right:4px;"></i>Enviar notificacao global</span></div>
+      <div class="sec-body">
+        <div class="f-row"><label>Titulo</label><input type="text" id="n-title" placeholder="ex: Nova funcionalidade!" oninput="updatePrev()"></div>
+        <div class="f-row"><label>Mensagem</label><textarea id="n-body" placeholder="Mensagem para todos os utilizadores..." oninput="updatePrev()"></textarea></div>
+        <div class="f-row"><label>Destinatarios</label><select id="n-target"><option value="all">Todos os utilizadores</option><option value="active">Apenas activos</option><option value="premium">Apenas premium</option></select></div>
+        <div class="notif-prev" id="notif-prev">
+          <div class="notif-prev-title" id="prev-title">Titulo</div>
+          <div class="notif-prev-body" id="prev-body">Mensagem</div>
+        </div>
+        <button class="btn-blue" type="button" style="margin-top:10px;" onclick="sendNotif()"><i class="ti ti-send"></i>Enviar notificacao</button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-hdr"><span class="sec-hdr-title"><i class="ti ti-bell" style="font-size:12px;margin-right:4px;"></i>Alertas automaticos</span></div>
+      <div class="sec-body">
+        <div class="toggle-row"><div class="toggle-info"><div class="toggle-title">Alerta 80% do orcamento</div><div class="toggle-desc">Notificar ao atingir 80%</div></div><button class="switch on" id="sw-n1" type="button" onclick="tog('sw-n1')"><div class="knob"></div></button></div>
+        <div class="toggle-row"><div class="toggle-info"><div class="toggle-title">Resumo semanal</div><div class="toggle-desc">Enviar toda segunda-feira</div></div><button class="switch on" id="sw-n2" type="button" onclick="tog('sw-n2')"><div class="knob"></div></button></div>
+        <div class="toggle-row"><div class="toggle-info"><div class="toggle-title">Novo utilizador registado</div><div class="toggle-desc">Notificar o admin</div></div><button class="switch on" id="sw-n3" type="button" onclick="tog('sw-n3')"><div class="knob"></div></button></div>
+        <div class="toggle-row"><div class="toggle-info"><div class="toggle-title">Relatorio mensal</div><div class="toggle-desc">Final de cada mes</div></div><button class="switch off" id="sw-n4" type="button" onclick="tog('sw-n4')"><div class="knob"></div></button></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-hdr"><span class="sec-hdr-title"><i class="ti ti-history" style="font-size:12px;margin-right:4px;"></i>Historico de notificacoes</span></div>
+      <div class="sec-body" style="padding:0;">
+        <table class="tbl">
+          <thead><tr><th>Titulo</th><th>Dest.</th><th>Data</th></tr></thead>
+          <tbody>
+            <tr><td>Bem-vindo!</td><td>Todos</td><td>17 mai</td></tr>
+            <tr><td>Actualizacao v1.1</td><td>Activos</td><td>15 mai</td></tr>
+            <tr><td>Novo mes!</td><td>Todos</td><td>01 mai</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- BACKUP -->
+  <div class="panel" id="p-backup">
+    <div id="alert-backup" class="p-alert"></div>
+
+    <div class="sec">
+      <div class="sec-hdr"><span class="sec-hdr-title"><i class="ti ti-download" style="font-size:12px;margin-right:4px;"></i>Exportar dados</span></div>
+      <div class="sec-body">
+        <div class="f-row"><label>Formato</label><select id="bk-format"><option value="json">JSON (dados completos)</option><option value="csv">CSV (Excel)</option></select></div>
+        <button class="btn-blue" type="button" onclick="doBackup()"><i class="ti ti-download"></i>Descarregar backup</button>
+        <button class="btn-yellow" type="button" style="margin-top:8px;" onclick="showAlert('alert-backup','Para backup na nuvem configure o Google Drive nas definicoes do Firebase.','ok')"><i class="ti ti-cloud-upload"></i>Guardar no Google Drive</button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-hdr"><span class="sec-hdr-title"><i class="ti ti-history" style="font-size:12px;margin-right:4px;"></i>Backups anteriores</span></div>
+      <div class="sec-body">
+        <div class="bk-item"><div class="bk-icon"><i class="ti ti-file-zip"></i></div><div class="bk-info"><div class="bk-name">backup_2025-05-17.json</div><div class="bk-date">17 mai 2025 &mdash; 2.4 MB</div></div><button class="btn-sm btn-sm-blue" type="button">Restaurar</button></div>
+        <div class="bk-item"><div class="bk-icon"><i class="ti ti-file-zip"></i></div><div class="bk-info"><div class="bk-name">backup_2025-05-10.json</div><div class="bk-date">10 mai 2025 &mdash; 1.8 MB</div></div><button class="btn-sm btn-sm-blue" type="button">Restaurar</button></div>
+        <div class="bk-item"><div class="bk-icon"><i class="ti ti-file-zip"></i></div><div class="bk-info"><div class="bk-name">backup_2025-05-01.json</div><div class="bk-date">01 mai 2025 &mdash; 1.2 MB</div></div><button class="btn-sm btn-sm-blue" type="button">Restaurar</button></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-hdr"><span class="sec-hdr-title"><i class="ti ti-settings" style="font-size:12px;margin-right:4px;"></i>Backup automatico</span></div>
+      <div class="sec-body">
+        <div class="toggle-row"><div class="toggle-info"><div class="toggle-title">Backup diario</div><div class="toggle-desc">Todo os dias a meia-noite</div></div><button class="switch on" id="sw-bk1" type="button" onclick="tog('sw-bk1')"><div class="knob"></div></button></div>
+        <div class="toggle-row"><div class="toggle-info"><div class="toggle-title">Sincronizar Google Drive</div></div><button class="switch off" id="sw-bk2" type="button" onclick="tog('sw-bk2')"><div class="knob"></div></button></div>
+        <div class="f-row" style="margin-top:12px;"><label>Guardar backups por (dias)</label><input type="number" value="30" min="7" max="365"></div>
+        <button class="btn-blue" type="button" onclick="showAlert('alert-backup','Configuracoes de backup guardadas!','ok')"><i class="ti ti-device-floppy"></i>Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGS -->
+  <div class="panel" id="p-logs">
+    <div class="sec">
+      <div class="sec-hdr">
+        <span class="sec-hdr-title"><i class="ti ti-list" style="font-size:12px;margin-right:4px;"></i>Registo de actividade</span>
+        <button class="btn-sm btn-sm-blue" type="button" onclick="clearLogs()">Limpar</button>
+      </div>
+      <div class="sec-body"><div id="logs-list">
+        <div class="log-item"><div class="log-dot" style="background:#1A5FD4;"></div><div><div class="log-text">Admin entrou no painel</div><div class="log-time">Agora</div></div></div>
+        <div class="log-item"><div class="log-dot" style="background:#0F6E56;"></div><div><div class="log-text">Novo utilizador: maria@outlook.com</div><div class="log-time">19 mai, 11:20</div></div></div>
+        <div class="log-item"><div class="log-dot" style="background:#1A5FD4;"></div><div><div class="log-text">Login: derciobila@gmail.com</div><div class="log-time">19 mai, 10:45</div></div></div>
+        <div class="log-item"><div class="log-dot" style="background:#F5C518;"></div><div><div class="log-text">Notificacao enviada para todos</div><div class="log-time">17 mai, 14:00</div></div></div>
+        <div class="log-item"><div class="log-dot" style="background:#0F6E56;"></div><div><div class="log-text">Backup automatico concluido</div><div class="log-time">17 mai, 00:01</div></div></div>
+        <div class="log-item"><div class="log-dot" style="background:#A32D2D;"></div><div><div class="log-text">Login falhado: unknown@test.com</div><div class="log-time">15 mai, 09:10</div></div></div>
+      </div></div>
+    </div>
+    <div class="sec">
+      <div class="sec-hdr"><span class="sec-hdr-title"><i class="ti ti-filter" style="font-size:12px;margin-right:4px;"></i>Filtrar logs</span></div>
+      <div class="sec-body">
+        <div class="f-row"><label>Tipo</label><select><option>Todos</option><option>Logins</option><option>Registos</option><option>Erros</option></select></div>
+        <div class="f-row"><label>Data</label><input type="date"></div>
+        <button class="btn-blue" type="button"><i class="ti ti-search"></i>Filtrar</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /sc-panel -->
+</div><!-- /wrap -->
+
+<!-- FIREBASE COMPAT -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+<script>
+// ── FIREBASE INIT ──────────────────────────────────────────
+firebase.initializeApp({
+  apiKey: "AIzaSyCHb6W7PUGUcGjjx3pVRsgjSxtTAhfQw7Y",
+  authDomain: "gerenciepay.firebaseapp.com",
+  projectId: "gerenciepay",
+  storageBucket: "gerenciepay.firebasestorage.app",
+  messagingSenderId: "1040632855540",
+  appId: "1:1040632855540:web:b35a28b4e5fadfcbd4d7a1"
+});
+var auth = firebase.auth();
+var ADMIN = 'admin@gerenciepay.com';
+var appColors = { p: '#1A5FD4', a: '#F5C518' };
+
+// Sessao activa
+auth.onAuthStateChanged(function(u) {
+  if (u && u.email === ADMIN) { enterPanel(u); }
+});
+
+// ── LOGIN ──────────────────────────────────────────────────
+function doLogin() {
+  var email = document.getElementById('adm-email').value.trim();
+  var pass  = document.getElementById('adm-pass').value;
+  var err   = document.getElementById('login-err');
+  var btn   = document.getElementById('btn-login');
+
+  err.style.display = 'none';
+
+  if (!email || !pass) {
+    err.textContent = 'Preencha o e-mail e a palavra-passe.';
+    err.style.display = 'block'; return;
+  }
+  if (email !== ADMIN) {
+    err.textContent = 'Acesso negado. Apenas admin@gerenciepay.com pode entrar.';
+    err.style.display = 'block'; return;
+  }
+
+  btn.innerHTML = '<span class="spinner-b"></span>A verificar...';
+  btn.disabled = true;
+
+  auth.signInWithEmailAndPassword(email, pass)
+    .then(function(c) {
+      if (c.user.email !== ADMIN) {
+        auth.signOut();
+        err.textContent = 'Conta sem permissoes de administrador.';
+        err.style.display = 'block';
+      } else {
+        enterPanel(c.user);
+      }
+    })
+    .catch(function(e) {
+      var m = {
+        'auth/wrong-password':        'Palavra-passe incorrecta.',
+        'auth/invalid-credential':    'E-mail ou palavra-passe incorrectos.',
+        'auth/user-not-found':        'Conta nao encontrada. Crie admin@gerenciepay.com no Firebase.',
+        'auth/too-many-requests':     'Muitas tentativas. Aguarde alguns minutos.',
+        'auth/network-request-failed':'Sem ligacao a internet.'
+      };
+      err.textContent = m[e.code] || 'Erro: ' + e.code;
+      err.style.display = 'block';
+    })
+    .finally(function() {
+      btn.innerHTML = '<i class="ti ti-shield-check"></i>Entrar como Administrador';
+      btn.disabled = false;
+    });
+}
+
+function enterPanel(user) {
+  document.getElementById('topbar-email').textContent = user.email;
+  showScreen('sc-panel');
+  addLog('Admin entrou no painel', '#1A5FD4');
+}
+
+function doLogout() {
+  auth.signOut().then(function() { showScreen('sc-login'); });
+}
+
+// ── UI HELPERS ─────────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+}
+
+function switchTab(id, idx) {
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+}
+
+function tog(id) {
+  var el = document.getElementById(id);
+  el.classList.toggle('on'); el.classList.toggle('off');
+}
+
+function showAlert(id, msg, type) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.className = 'p-alert ' + type;
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(function(){ el.style.display = 'none'; }, 5000);
+}
+
+function addLog(msg, color) {
+  var list = document.getElementById('logs-list');
+  if (!list) return;
+  var t = new Date().toLocaleTimeString('pt-MZ',{hour:'2-digit',minute:'2-digit'});
+  var d = document.createElement('div');
+  d.className = 'log-item';
+  d.innerHTML = '<div class="log-dot" style="background:'+color+';"></div><div><div class="log-text">'+msg+'</div><div class="log-time">Agora, '+t+'</div></div>';
+  list.insertBefore(d, list.firstChild);
+}
+
+// ── UTILIZADORES ───────────────────────────────────────────
+function createUser() {
+  var name  = document.getElementById('nu-name').value.trim();
+  var email = document.getElementById('nu-email').value.trim();
+  var pass  = document.getElementById('nu-pass').value;
+  if (!name||!email||pass.length<6) {
+    showAlert('alert-users','Preencha todos os campos (palavra-passe min. 6 caracteres).','err'); return;
+  }
+  var btn = document.getElementById('btn-create-user');
+  btn.innerHTML = '<span class="spinner-b"></span>A criar...'; btn.disabled = true;
+  auth.createUserWithEmailAndPassword(email, pass)
+    .then(function(c){ return c.user.updateProfile({displayName:name}).then(function(){ return c.user.sendEmailVerification(); }); })
+    .then(function(){
+      showAlert('alert-users','Utilizador '+name+' criado! E-mail de verificacao enviado.','ok');
+      addLog('Admin criou utilizador: '+email,'#0F6E56');
+      document.getElementById('nu-name').value='';
+      document.getElementById('nu-email').value='';
+      document.getElementById('nu-pass').value='';
+    })
+    .catch(function(e){
+      var m={'auth/email-already-in-use':'E-mail ja registado.','auth/invalid-email':'E-mail invalido.','auth/weak-password':'Palavra-passe fraca.'};
+      showAlert('alert-users', m[e.code]||'Erro: '+e.code,'err');
+    })
+    .finally(function(){ btn.innerHTML='<i class="ti ti-user-plus"></i>Criar utilizador'; btn.disabled=false; });
+}
+
+function sendReset() {
+  var email = document.getElementById('reset-email').value.trim();
+  if (!email) { showAlert('alert-users','Insira o e-mail.','err'); return; }
+  auth.sendPasswordResetEmail(email)
+    .then(function(){ showAlert('alert-users','Link enviado para '+email,'ok'); addLog('Reset de password: '+email,'#F5C518'); document.getElementById('reset-email').value=''; })
+    .catch(function(e){
+      var m={'auth/user-not-found':'E-mail nao encontrado.','auth/invalid-email':'E-mail invalido.'};
+      showAlert('alert-users', m[e.code]||'Erro: '+e.code,'err');
+    });
+}
+
+// ── CORES ──────────────────────────────────────────────────
+function pickColor(type, color, el) {
+  appColors[type] = color;
+  var row = el.parentElement;
+  row.querySelectorAll('.c-opt').forEach(function(o){ o.classList.remove('sel'); });
+  el.classList.add('sel');
+  updateColorPreview();
+}
+function pickColorCustom(type, color) { appColors[type]=color; updateColorPreview(); }
+function updateColorPreview() {
+  var b = document.getElementById('color-prev');
+  b.style.background = appColors.p; b.style.color = appColors.a;
+}
+function saveColors() {
+  showAlert('alert-app','Cores guardadas com sucesso!','ok');
+  addLog('Admin actualizou cores da app','#F5C518');
+}
+
+// ── APP CONFIG ─────────────────────────────────────────────
+function saveAppConfig() {
+  var name = document.getElementById('app-name').value;
+  showAlert('alert-app','Configuracoes guardadas: '+name,'ok');
+  addLog('Admin actualizou configuracoes da app','#1A5FD4');
+}
+function addCat() {
+  var v = document.getElementById('new-cat').value.trim(); if(!v) return;
+  var d=document.createElement('div');
+  d.style.cssText='display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid #F0F4FF;';
+  d.innerHTML='<div style="flex:1;font-size:13px;">'+v+'</div><button class="btn-sm btn-sm-red" onclick="this.parentElement.remove()">Remover</button>';
+  document.getElementById('cats-list').appendChild(d);
+  document.getElementById('new-cat').value='';
+  showAlert('alert-app','Categoria "'+v+'" adicionada!','ok');
+}
+function addStore() {
+  var v=document.getElementById('new-store').value.trim(); if(!v) return;
+  showAlert('alert-app','Supermercado "'+v+'" adicionado!','ok');
+  document.getElementById('new-store').value='';
+}
+
+// ── NOTIFICACOES ───────────────────────────────────────────
+function updatePrev() {
+  var t=document.getElementById('n-title').value;
+  var b=document.getElementById('n-body').value;
+  var box=document.getElementById('notif-prev');
+  if(t||b){ box.style.display='block'; document.getElementById('prev-title').textContent=t||'Titulo'; document.getElementById('prev-body').textContent=b||'Mensagem'; }
+  else box.style.display='none';
+}
+function sendNotif() {
+  var t=document.getElementById('n-title').value.trim();
+  var b=document.getElementById('n-body').value.trim();
+  if(!t||!b){ showAlert('alert-notifs','Preencha titulo e mensagem.','err'); return; }
+  showAlert('alert-notifs','Notificacao "'+t+'" enviada!','ok');
+  addLog('Admin enviou notificacao: "'+t+'"','#F5C518');
+  document.getElementById('n-title').value=''; document.getElementById('n-body').value=''; document.getElementById('notif-prev').style.display='none';
+}
+
+// ── BACKUP ─────────────────────────────────────────────────
+function doBackup() {
+  var fmt=document.getElementById('bk-format').value;
+  var data={exportDate:new Date().toISOString(),app:'Controlo Financeiro - Gerenciepay',users:[{email:'derciobila@gmail.com',name:'Dercio Bila',role:'admin'},{email:'joao@gmail.com',name:'Joao Silva',role:'user'},{email:'maria@outlook.com',name:'Maria Santos',role:'user'}],config:{defaultSalary:6000,currency:'MT',appName:'Controlo Financeiro'}};
+  var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  var url=URL.createObjectURL(blob); var a=document.createElement('a'); a.href=url; a.download='backup_'+new Date().toISOString().slice(0,10)+'.'+fmt; a.click(); URL.revokeObjectURL(url);
+  showAlert('alert-backup','Backup exportado com sucesso!','ok');
+  addLog('Admin exportou backup ('+fmt.toUpperCase()+')','#0F6E56');
+}
+
+// ── LOGS ───────────────────────────────────────────────────
+function clearLogs() {
+  if(!confirm('Apagar todos os logs?')) return;
+  document.getElementById('logs-list').innerHTML='<div class="log-item"><div class="log-dot" style="background:#1A5FD4;"></div><div><div class="log-text">Logs apagados pelo administrador</div><div class="log-time">Agora</div></div></div>';
+}
+</script>
+</body>
+</html>
